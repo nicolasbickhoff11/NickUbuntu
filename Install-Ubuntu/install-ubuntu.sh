@@ -12,5 +12,14 @@ echo "proot --kill-on-exit --link2symlink -0 -r ~/ubuntu -b /dev -b /proc -b /sy
 
 chmod +x ~/start-ubuntu.sh
 
-~/start-ubuntu.sh >> clear &&
+echo "groupname3003:x:3003:" > ~/ubuntu/etc/group
+echo "groupname9997:x:9997:" >> ~/ubuntu/etc/group
+echo "groupname20203:x:20203:" >>> ~/ubuntu/etc/group
+echo "groupname50203:x:50203:" >>>> ~/ubuntu/etc/group
+
+echo "nameserver 8.8.8.8" > ~/ubuntu/etc/resolv.conf
+
+clear &&
 echo "Você pode executar Ubuntu de novo a partir do comando ~/start-ubuntu.sh"
+
+~/start-ubuntu.sh 
