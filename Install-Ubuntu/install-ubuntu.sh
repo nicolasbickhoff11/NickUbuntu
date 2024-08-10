@@ -12,6 +12,5 @@ echo "proot --kill-on-exit --link2symlink -0 -r ~/ubuntu -b /dev -b /proc -b /sy
 
 chmod +x ~/start-ubuntu.sh
 
-~/start-ubuntu.sh >> clear
-
+~/start-ubuntu.sh >> clear &&
 echo "Você pode executar Ubuntu de novo a partir do comando ~/start-ubuntu.sh"
