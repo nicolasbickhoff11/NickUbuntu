@@ -14,7 +14,8 @@ chmod +x ~/start-ubuntu.sh
 
 mv ~/ubuntu/etc/group ~/ubuntu/etc/group.backup
 
-echo "groupname3003:x:3003:" > ~/ubuntu/etc/group
+echo "groupname0:x:0:" > ~/ubuntu/etc/group
+echo "groupname3003:x:3003:" >> ~/ubuntu/etc/group
 echo "groupname9997:x:9997:" >> ~/ubuntu/etc/group
 echo "groupname20203:x:20203:" >> ~/ubuntu/etc/group
 echo "groupname50203:x:50203:" >> ~/ubuntu/etc/group
