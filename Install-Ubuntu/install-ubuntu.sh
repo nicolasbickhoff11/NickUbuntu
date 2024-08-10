@@ -1,3 +1,5 @@
+#!/bin/bash
+
 wget https://partner-images.canonical.com/core/focal/current/ubuntu-focal-core-cloudimg-arm64-root.tar.gz -O tmp.tar.gz
 
 mkdir -p ~/ubuntu
