@@ -36,7 +36,7 @@ command+=" -w /root "
 command+=" /usr/bin/env -i "
 command+=" HOME=/root "
 command+=" TERM=\$TERM "
-command+=" /bin/bash --login"
+command+=" /bin/bash -c 'export PATH && /bin/bash --login' "
 exec \$command
 EOF
 echo "nameserver 1.1.1.1" > $HOME/ubuntu-fs/etc/resolv.conf
