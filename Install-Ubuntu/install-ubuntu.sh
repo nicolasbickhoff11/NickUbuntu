@@ -34,10 +34,7 @@ command+=" -b /dev "
 command+=" -b /sys "
 command+=" -b /:/host-rootfs "
 command+=" -w /root "
-command+=" /usr/bin/env -i "
-command+=" HOME=/root "
-command+=" TERM=\$TERM "
-command+=" /bin/bash -c 'export PATH && /bin/bash --login' "
+command+=" /bin/su - "
 exec \$command
 EOF
 echo "nameserver 1.1.1.1" > $HOME/ubuntu-fs/etc/resolv.conf
