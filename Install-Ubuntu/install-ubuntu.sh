@@ -1,4 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
+apt install proot tar wget -y
 if [ "$(uname -m)" == "aarch64" ]; then
 LINK="https://cdimage.ubuntu.com/ubuntu-base/releases/22.04/release/ubuntu-base-22.04-base-arm64.tar.gz"
 elif [ "$(uname -m)" == "armv7l" ]; then
