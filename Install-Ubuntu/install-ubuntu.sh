@@ -3,14 +3,20 @@ LINK="https://cdimage.ubuntu.com/ubuntu-base/releases/22.04/release/ubuntu-base-
 ROOTFS_PATH="$HOME/ubuntu-fs"
 CACHE_DIR="$HOME/.cache_dir"
 ARCHIVE_NAME="ubuntu-base-22.04-base-arm64.tar.gz"
-if [ -d "$ROOTFS_PATH" ]; then                       echo "O Ubuntu já está instalado"
+if [ -d "$ROOTFS_PATH" ]; then
+   echo "O Ubuntu já está instalado"
    exit 1
 else
    mkdir -p "$ROOTFS_PATH"
-   mkdir -p "$CACHE_DIR"                             echo -e "\e[1;32m[*] Baixando Ubuntu...\e[0m"     wget "$LINK" -O "$CACHE_DIR/$ARCHIVE_NAME"
-   echo -e "\e[1;32m[*] Extraindo Ubuntu...\e[0m"    proot -l tar -xf "$CACHE_DIR/$ARCHIVE_NAME" -C "$ROOTFS_PATH"                                       rm -rf "$HOME/.cache_dir"
+   mkdir -p "$CACHE_DIR"
+   echo -e "\e[1;32m[*] Baixando Ubuntu...\e[0m"
+   wget "$LINK" -O "$CACHE_DIR/$ARCHIVE_NAME"
+   echo -e "\e[1;32m[*] Extraindo Ubuntu...\e[0m"
+   proot -l tar -xf "$CACHE_DIR/$ARCHIVE_NAME" -C "$ROOTFS_PATH"
+   rm -rf "$HOME/.cache_dir"
    echo -e "\e[1;32m[*] Criando Script...\e[0m"
-   cat << EOF > $HOME/start-ubuntu.sh             unset LD_PRELOAD
+   cat << EOF > $HOME/start-ubuntu.sh
+unset LD_PRELOAD
 rootfs="$HOME/ubuntu-fs"
 command="proot -k 6.8.0 -l -0 -r \$rootfs "
 command+=" -b /proc "
@@ -32,7 +38,8 @@ id | sed 's/.*groups=//' | tr ',' '\n' \
 | cut -d' ' -f1 \
 >> $HOME/ubuntu-fs/etc/group
 
-unset LD_PRELOAD                                  proot -l -0 -r "$HOME/ubuntu-fs" -b /proc -b /dev -b /sys -w /root /usr/bin/env -i HOME=/root TERM=$TERM /bin/bash -c "apt update && apt upgrade -y && apt install sudo vim tzdata nano wget curl -y"
+unset LD_PRELOAD
+proot -l -0 -r "$HOME/ubuntu-fs" -b /proc -b /dev -b /sys -w /root /usr/bin/env -i HOME=/root TERM=$TERM /bin/bash -c "apt update && apt upgrade -y && apt install sudo vim tzdata wget curl"
 chmod +x $HOME/start-ubuntu.sh
 echo "YOU CAN START UBUNTU WITH ~/start-ubuntu.sh"
 exit 1
