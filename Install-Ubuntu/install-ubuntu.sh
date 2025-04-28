@@ -1,24 +1,39 @@
-#!/bin/bash
+#!/data/data/com.termux/files/usr/bin/bash
+LINK="https://cdimage.ubuntu.com/ubuntu-base/releases/22.04/release/ubuntu-base-22.04-base-arm64.tar.gz"
+ROOTFS_PATH="$HOME/ubuntu-fs"
+CACHE_DIR="$HOME/.cache_dir"
+ARCHIVE_NAME="ubuntu-base-22.04-base-arm64.tar.gz"
+if [ -d "$ROOTFS_PATH" ]; then                       echo "O Ubuntu já está instalado"
+   exit 1
+else
+   mkdir -p "$ROOTFS_PATH"
+   mkdir -p "$CACHE_DIR"                             echo -e "\e[1;32m[*] Baixando Ubuntu...\e[0m"     wget "$LINK" -O "$CACHE_DIR/$ARCHIVE_NAME"
+   echo -e "\e[1;32m[*] Extraindo Ubuntu...\e[0m"    proot -l tar -xf "$CACHE_DIR/$ARCHIVE_NAME" -C "$ROOTFS_PATH"                                       rm -rf "$HOME/.cache_dir"
+   echo -e "\e[1;32m[*] Criando Script...\e[0m"
+   cat << EOF > $HOME/start-ubuntu.sh             unset LD_PRELOAD
+rootfs="$HOME/ubuntu-fs"
+command="proot -k 6.8.0 -l -0 -r \$rootfs "
+command+=" -b /proc "
+command+=" -b /dev "
+command+=" -b /sys "
+command+=" -b /:/host-rootfs "
+command+=" -w /root "
+command+=" /usr/bin/env -i "
+command+=" HOME=/root "
+command+=" TERM=\$TERM "
+command+=" /bin/bash --login"
+exec \$command
+EOF
+echo "nameserver 1.1.1.1" > $HOME/ubuntu-fs/etc/resolv.conf
+id | sed 's/.*groups=//' | tr ',' '\n' \
+| sed -E 's/([0-9]+)\(([^)]+)\)/\2:x:\1:/' \
+| grep -vE '^u0_[^_]+$' \
+| grep -v '^c[0-9]\+$' \
+| cut -d' ' -f1 \
+>> $HOME/ubuntu-fs/etc/group
 
-wget https://partner-images.canonical.com/core/focal/current/ubuntu-focal-core-cloudimg-arm64-root.tar.gz -O tmp.tar.gz
-
-mkdir -p ~/ubuntu
-
-proot -l tar -xvf tmp.tar.gz -C ~/ubuntu
-
-rm tmp.tar.gz
-
-echo "unset LD_PRELOAD" > ~/start-ubuntu.sh
-
-echo "proot --kill-on-exit --link2symlink -0 -r ~/ubuntu -b /dev -b /proc -b /sys -w /root /usr/bin/env -i HOME=/root PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin TERM=$TERM LANG=C.UTF-8 /usr/bin/bash --login" >> ~/start-ubuntu.sh
-
-chmod +x ~/start-ubuntu.sh
-
-touch ~/ubuntu/root/.hushlogin
-
-mv ~/ubuntu/etc/resolv.conf ~/ubuntu/etc/resolv.backup
-
-echo "nameserver 8.8.8.8" > ~/ubuntu/etc/resolv.conf
-
-clear
-echo "Você pode executar Ubuntu de novo a partir do comando ~/start-ubuntu.sh" && ~/start-ubuntu.sh 
+unset LD_PRELOAD                                  proot -l -0 -r "$HOME/ubuntu-fs" -b /proc -b /dev -b /sys -w /root /usr/bin/env -i HOME=/root TERM=$TERM /bin/bash -c "apt update && apt upgrade -y && apt install sudo vim tzdata nano wget curl -y"
+chmod +x $HOME/start-ubuntu.sh
+echo "YOU CAN START UBUNTU WITH ~/start-ubuntu.sh"
+exit 1
+fi
